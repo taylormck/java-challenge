@@ -43,5 +43,26 @@ Application (with the embedded H2 database) is ready to be used ! You can access
 - [x] Added tests for the Employee Service
 - [x] Added search by name
   - [x] Tests
-- [ ] Added search by department
-  - [ ] 
+- [x] Added search by department
+  - [x] Tests
+
+#### What's next?
+
+There's a few things I would have liked to do if I'd had a bit more time.
+
+First, when I implemented the ability to search by name and department, I had
+implemented them as new paths. Given a bit more time, I would have liked to
+go back and instead implement them as queries on the `/employees`endpoint, i.e.,
+`/employees?name="Jimmy"&department="R&D"`. This would allow for mixing and
+matching of the filters as desired, and wouldn't requrie new endpoints to be
+supported.
+
+The next feature I would have added would have been to make a proper table for
+departments, rather than let them be strings on the employee table. This would
+have allowed for a bit more consistency when dealing with them, and would
+make searching for users by department a simple join.
+
+Finally, a few endpoints to do anything interesting with salary would have been
+nice. Perhaps things like getting the mean/median/mode salaries for all
+employees or by department, highest salaries, etc. It's information that we
+have in the DB, but aren't doing anything with.
