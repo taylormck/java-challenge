@@ -35,3 +35,25 @@ Application (with the embedded H2 database) is ready to be used ! You can access
 - Appropriate usage of packages
 - Is the application running as expected
 - No performance issues
+
+#### What I've Done
+- [x] Updated Spring Boot
+- [x] Added smoke tests for Employee Controller
+- [x] Added tests for the Employee Controller
+- [ ] Added tests for the Employee Service
+- [ ] Added search by name
+  - [ ] Tests
+- [ ] Added ability to query Departments
+  - [ ] Smoke tests
+  - [ ] List all Departments
+    - [ ] Tests
+  - [ ] Post Department
+    - [ ] Tests
+  - [ ] Get Department by ID
+    - [ ] Tests
+  - [ ] Get Department by Name
+    - [ ] Tests
+  - [ ] Get Department by Employee
+    - [ ] Tests
+  - [ ] Get Employee by Department
+    - [ ] Tests
