@@ -1,8 +1,11 @@
 package jp.co.axa.apidemo.controllers;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
@@ -112,5 +116,59 @@ public class EmployeeControllerTest {
         .content(employeeJSON.toString())
       )
       .andExpect(status().isOk());
+
+    verify(employeeService).saveEmployee(ArgumentMatchers.any(Employee.class));
   }
+
+  @Test
+  public void deleteEmployeesShouldDeleteEmployee() throws Exception {
+    this.mockMvc.perform(delete(employeesPath + "/1"))
+      .andExpect(status().isOk());
+    verify(employeeService).deleteEmployee(1l);
+  }
+
+  @Test
+  public void putEmployeesShouldReturn404WhenNotFound() throws Exception {
+    Employee expected = new Employee();
+    expected.setId(1l);
+    expected.setName("Jimmy");
+    expected.setSalary(120000);
+    expected.setDepartment("R&D");
+
+    // Do not return this employee on employeeService.getEmployee is called.
+    when(employeeService.getEmployee(ArgumentMatchers.anyLong()))
+      .thenReturn(null);
+
+    JSONObject employeeJSON = new JSONObject(expected);
+
+    this.mockMvc.perform(
+      put(employeesPath + "/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employeeJSON.toString())
+      )
+      .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void putEmployeesShouldUpdateEmployee() throws Exception {
+    Employee expected = new Employee();
+    expected.setId(1l);
+    expected.setName("Jimmy");
+    expected.setSalary(120000);
+    expected.setDepartment("R&D");
+
+    when(employeeService.getEmployee(ArgumentMatchers.anyLong()))
+      .thenReturn(expected);
+
+    JSONObject employeeJSON = new JSONObject(expected);
+ 
+    this.mockMvc.perform(
+      put(employeesPath + "/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employeeJSON.toString())
+      )
+      .andExpect(status().isOk());
+
+    verify(employeeService).updateEmployee(ArgumentMatchers.any(Employee.class));
+  } 
 }

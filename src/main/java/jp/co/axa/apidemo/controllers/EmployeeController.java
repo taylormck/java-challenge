@@ -35,7 +35,7 @@ public class EmployeeController {
     if (employee == null) {
       throw new ResponseStatusException(
         HttpStatus.NOT_FOUND,
-        "entity not found"
+        "Employee not found for this id: " + employeeId
       );
     }
 
@@ -60,8 +60,14 @@ public class EmployeeController {
     @PathVariable(name="employeeId")Long employeeId
   ){
     Employee emp = employeeService.getEmployee(employeeId);
-    if(emp != null){
-        employeeService.updateEmployee(employee);
+
+    if(emp == null){
+      throw new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+        "Employee not found for this id: " + employeeId
+      );
     }
+
+    employeeService.updateEmployee(employee);
   }
 }
