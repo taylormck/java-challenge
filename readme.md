@@ -41,19 +41,7 @@ Application (with the embedded H2 database) is ready to be used ! You can access
 - [x] Added smoke tests for Employee Controller
 - [x] Added tests for the Employee Controller
 - [x] Added tests for the Employee Service
-- [ ] Added search by name
-  - [ ] Tests
-- [ ] Added ability to query Departments
-  - [ ] Smoke tests
-  - [ ] List all Departments
-    - [ ] Tests
-  - [ ] Post Department
-    - [ ] Tests
-  - [ ] Get Department by ID
-    - [ ] Tests
-  - [ ] Get Department by Name
-    - [ ] Tests
-  - [ ] Get Department by Employee
-    - [ ] Tests
-  - [ ] Get Employee by Department
-    - [ ] Tests
+- [x] Added search by name
+  - [x] Tests
+- [ ] Added search by department
+  - [ ] 

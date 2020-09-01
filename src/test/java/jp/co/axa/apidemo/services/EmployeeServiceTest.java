@@ -13,14 +13,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.domain.Specification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
 
-@WebMvcTest(EmployeeServiceImpl.class)
-public class EmployeeServiceImplTest {
+@WebMvcTest(EmployeeService.class)
+public class EmployeeServiceTest {
   
   @Autowired
   private EmployeeService employeeService;
@@ -46,6 +48,12 @@ public class EmployeeServiceImplTest {
     }
 
     return expected;
+  }
+
+  @BeforeEach
+  public void beforeEach(){
+    employeeRepository.deleteAll();
+    employeeRepository.flush();
   }
 
   @Test
@@ -89,6 +97,36 @@ public class EmployeeServiceImplTest {
       .thenReturn(optional);
 
     Employee result = employeeService.getEmployee(expected.getId());
+
+    assertThat(result).isEqualTo(expected);
+  }
+
+  @Test
+  public void getEmployeesByNameShouldReturnEmptyWhenNotFound() throws Exception {
+    ArrayList<Employee> expected = new ArrayList<Employee>();
+
+    List<Employee> result = employeeService.getEmployeesByName("Jimmy");
+
+    assertThat(result).isEqualTo(expected);
+  }
+
+  @Test
+  public void getEmployeesByNameShouldReturnListOfMatchingEmployees() throws Exception {
+    List<Employee> employees = this.getExampleEmployees();
+    List<Employee> expected = employees.subList(0, 1);
+
+    String employeeName = employees.get(0).getName();
+
+    // This is a little gross, but it's the cleanest way to get
+    // ArgumentMatchers.any to play nice with token types like
+    // Specification<Employee>.
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    Class<Specification<Employee>> specClass = (Class<Specification<Employee>>) (Class) Specification.class;
+
+    when(employeeRepository.findAll(ArgumentMatchers.any(specClass)))
+      .thenReturn(expected);
+
+    List<Employee> result = employeeService.getEmployeesByName(employeeName);
 
     assertThat(result).isEqualTo(expected);
   }
