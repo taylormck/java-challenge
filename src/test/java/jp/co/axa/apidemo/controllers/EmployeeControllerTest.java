@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,26 @@ public class EmployeeControllerTest {
 
   String employeesPath = "/api/v1/employees";
 
+  /**
+   * Helper method to get a List of Employee objects.
+   */
+  private List<Employee> getExampleEmployees() {
+    ArrayList<Employee> expected = new ArrayList<Employee>();
+    String[] names = {"alex", "brittany", "charlie"};
+
+    for (int i = 0; i < names.length; ++i) {
+      Employee e = new Employee();
+      e.setId(0l + i);
+      e.setName(names[i]);
+      e.setSalary(100000);
+      e.setDepartment("R&D");
+
+      expected.add(e);
+    }
+
+    return expected;
+  }
+
 	@Test
 	public void getEmployeesShouldReturnEmptyListWhenThereAreNoRecords() throws Exception {
     ArrayList<Employee> expected = new ArrayList<Employee> ();
@@ -53,18 +74,7 @@ public class EmployeeControllerTest {
 
   @Test
   public void getEmployeesShouldReturnListOfEmployees() throws Exception {
-    ArrayList<Employee> expected = new ArrayList<Employee> ();
-    String[] names = {"alex", "brittany", "charlie"};
-
-    for (int i = 0; i < names.length; ++i) {
-      Employee e = new Employee();
-      e.setId(0l + i);
-      e.setName(names[i]);
-      e.setSalary(100000);
-      e.setDepartment("R&D");
-
-      expected.add(e);
-    }
+    List<Employee> expected = this.getExampleEmployees();
 
     when(employeeService.retrieveEmployees()).thenReturn(expected);
 
@@ -88,17 +98,47 @@ public class EmployeeControllerTest {
 
   @Test
   public void getEmployeesEmployeeIdShouldReturnEmployee() throws Exception {
-    Employee expected = new Employee();
-    expected.setId(1l);
-    expected.setName("Jimmy");
-    expected.setSalary(120000);
-    expected.setDepartment("R&D");
+    List<Employee> employees = this.getExampleEmployees();
+    Employee expected = employees.get(0);
 
-    when(employeeService.getEmployee(1l)).thenReturn(expected);
+    when(employeeService.getEmployee(ArgumentMatchers.anyLong()))
+      .thenReturn(expected);
 
     JSONObject expectedJSON = new JSONObject(expected);
 
-    this.mockMvc.perform(get(employeesPath + "/1"))
+    this.mockMvc.perform(get(employeesPath + "/0"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json(expectedJSON.toString()));
+  }
+
+  @Test
+  public void getEmployeesByNameShouldReturnEmptyWhenNotFound() throws Exception {
+    List<Employee> expected = new ArrayList<Employee> ();
+
+    when(employeeService.getEmployeesByName(ArgumentMatchers.any(String.class)))
+      .thenReturn(expected);
+
+    JSONArray expectedJSON = new JSONArray(expected);
+
+    this.mockMvc.perform(get(employeesPath + "ByName/Jimmy"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json(expectedJSON.toString()));
+  }
+
+  @Test
+  public void getEmployeesByNameShouldReturnListOfEmployeesWhenFound() throws Exception {
+    List<Employee> employees = this.getExampleEmployees();
+    List<Employee> expected = employees.subList(0, 1);
+    String employeeName = expected.get(0).getName();
+
+    when(employeeService.getEmployeesByName(ArgumentMatchers.eq(employeeName)))
+      .thenReturn(expected);
+
+    JSONArray expectedJSON = new JSONArray(expected);
+
+    this.mockMvc.perform(get(employeesPath + "ByName/" + employeeName))
       .andDo(print())
       .andExpect(status().isOk())
       .andExpect(content().json(expectedJSON.toString()));
@@ -106,11 +146,8 @@ public class EmployeeControllerTest {
 
   @Test
   public void postEmployeesShouldSaveEmployee() throws Exception {
-    Employee employee = new Employee();
-    employee.setId(1l);
-    employee.setName("Jimmy");
-    employee.setSalary(120000);
-    employee.setDepartment("R&D");
+    List<Employee> employees = this.getExampleEmployees();
+    Employee employee = employees.get(0);
 
     JSONObject employeeJSON = new JSONObject(employee);
  

@@ -23,8 +23,7 @@ public class EmployeeController {
 
   @GetMapping("/employees")
   public List<Employee> getEmployees() {
-    List<Employee> employees = employeeService.retrieveEmployees();
-      return employees;
+    return employeeService.retrieveEmployees();
   }
 
   @GetMapping("/employees/{employeeId}")
@@ -40,6 +39,11 @@ public class EmployeeController {
         "Employee not found for this id: " + employeeId
       );
     }
+  }
+
+  @GetMapping("/employeesByName/{employeeName}")
+  public List<Employee> getEmployeesByName(@PathVariable(name="employeeName")String employeeName){
+    return employeeService.getEmployeesByName(employeeName);
   }
 
   @PostMapping("/employees")

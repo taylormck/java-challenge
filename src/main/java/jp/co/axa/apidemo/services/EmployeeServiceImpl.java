@@ -2,6 +2,8 @@ package jp.co.axa.apidemo.services;
 
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
+import jp.co.axa.apidemo.specifications.EmployeeSpecifications;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +22,19 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     public List<Employee> retrieveEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return employees;
+        return employeeRepository.findAll();
     }
 
     public Employee getEmployee(Long employeeId) throws NoSuchElementException {
         Optional<Employee> optEmp = employeeRepository.findById(employeeId);
+
         return optEmp.get();
+    }
+
+    public List<Employee> getEmployeesByName(String employeeName) {
+        return employeeRepository.findAll(
+            EmployeeSpecifications.getEmployeesByName(employeeName)
+        );
     }
 
     public void saveEmployee(Employee employee){
