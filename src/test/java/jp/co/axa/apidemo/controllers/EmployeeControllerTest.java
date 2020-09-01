@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -61,6 +62,8 @@ public class EmployeeControllerTest {
       e.setName(names[i]);
       e.setSalary(100000);
       e.setDepartment("R&D");
+
+      expected.add(e);
     }
 
     when(employeeService.retrieveEmployees()).thenReturn(expected);
@@ -75,7 +78,8 @@ public class EmployeeControllerTest {
 
   @Test
   public void getEmployeesEmployeeIdShouldReturn404WhenNotFound() throws Exception {
-    when(employeeService.getEmployee(1l)).thenReturn(null);
+    when(employeeService.getEmployee(ArgumentMatchers.anyLong()))
+      .thenThrow(new NoSuchElementException("No such element"));
 
     this.mockMvc.perform(get(employeesPath + "/1"))
       .andDo(print())

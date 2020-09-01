@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,16 +31,15 @@ public class EmployeeController {
   public Employee getEmployee(@PathVariable(name="employeeId")Long employeeId) 
     throws ResponseStatusException
   {
-    Employee employee = employeeService.getEmployee(employeeId);
-
-    if (employee == null) {
+    try {
+      return employeeService.getEmployee(employeeId);
+    }
+    catch (NoSuchElementException e) {
       throw new ResponseStatusException(
         HttpStatus.NOT_FOUND,
         "Employee not found for this id: " + employeeId
       );
     }
-
-    return employee;
   }
 
   @PostMapping("/employees")
