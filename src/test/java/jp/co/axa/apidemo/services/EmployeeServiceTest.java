@@ -132,6 +132,34 @@ public class EmployeeServiceTest {
   }
 
   @Test
+  public void getEmployeesByDepartmentShouldReturnEmptyWhenNotFound() throws Exception {
+    ArrayList<Employee> expected = new ArrayList<Employee>();
+
+    List<Employee> result = employeeService.getEmployeesByDepartment("Sales");
+
+    assertThat(result).isEqualTo(expected);
+  }
+
+  @Test
+  public void getEmployeesByDepartmentShouldReturnListOfMatchingEmployees() throws Exception {
+    List<Employee> expected = this.getExampleEmployees();
+    String department = expected.get(0).getDepartment();
+
+    // This is a little gross, but it's the cleanest way to get
+    // ArgumentMatchers.any to play nice with token types like
+    // Specification<Employee>.
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    Class<Specification<Employee>> specClass = (Class<Specification<Employee>>) (Class) Specification.class;
+
+    when(employeeRepository.findAll(ArgumentMatchers.any(specClass)))
+      .thenReturn(expected);
+
+    List<Employee> result = employeeService.getEmployeesByDepartment(department);
+
+    assertThat(result).isEqualTo(expected);
+  }
+
+  @Test
   public void saveEmployeeShouldSaveEmployee() throws Exception {
     Employee expected = getExampleEmployees().get(0);
 

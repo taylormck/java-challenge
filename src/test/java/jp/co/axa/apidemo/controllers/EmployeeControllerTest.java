@@ -145,6 +145,37 @@ public class EmployeeControllerTest {
   }
 
   @Test
+  public void getEmployeesByDepartmentShouldReturnEmptyWhenNotFound() throws Exception {
+    List<Employee> expected = new ArrayList<Employee> ();
+
+    when(employeeService.getEmployeesByDepartment(ArgumentMatchers.any(String.class)))
+      .thenReturn(expected);
+
+    JSONArray expectedJSON = new JSONArray(expected);
+
+    this.mockMvc.perform(get(employeesPath + "ByDepartment/Sales"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json(expectedJSON.toString()));
+  }
+
+  @Test
+  public void getEmployeesByDepartmentShouldReturnListOfEmployeesWhenFound() throws Exception {
+    List<Employee> expected = this.getExampleEmployees();
+    String department = expected.get(0).getDepartment();
+
+    when(employeeService.getEmployeesByDepartment(ArgumentMatchers.any(String.class)))
+      .thenReturn(expected);
+
+    JSONArray expectedJSON = new JSONArray(expected);
+
+    this.mockMvc.perform(get(employeesPath + "ByDepartment/" + department))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json(expectedJSON.toString()));
+  }
+
+  @Test
   public void postEmployeesShouldSaveEmployee() throws Exception {
     List<Employee> employees = this.getExampleEmployees();
     Employee employee = employees.get(0);
