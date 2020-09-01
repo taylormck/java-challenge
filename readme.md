@@ -40,7 +40,7 @@ Application (with the embedded H2 database) is ready to be used ! You can access
 - [x] Updated Spring Boot
 - [x] Added smoke tests for Employee Controller
 - [x] Added tests for the Employee Controller
-- [ ] Added tests for the Employee Service
+- [x] Added tests for the Employee Service
 - [ ] Added search by name
   - [ ] Tests
 - [ ] Added ability to query Departments

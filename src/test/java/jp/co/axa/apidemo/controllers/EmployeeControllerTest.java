@@ -61,6 +61,8 @@ public class EmployeeControllerTest {
       e.setName(names[i]);
       e.setSalary(100000);
       e.setDepartment("R&D");
+
+      expected.add(e);
     }
 
     when(employeeService.retrieveEmployees()).thenReturn(expected);
