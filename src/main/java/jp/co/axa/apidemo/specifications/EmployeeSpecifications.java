@@ -14,4 +14,10 @@ public class EmployeeSpecifications {
       return criteriaBuilder.equal(root.get(Employee_.name), name);
     };
   }
+
+  public static Specification<Employee> getEmployeesByDepartment(String department) {
+    return (root, query, criteriaBuilder) -> {
+      return criteriaBuilder.equal(root.get(Employee_.department), department);
+    };
+  }
 }

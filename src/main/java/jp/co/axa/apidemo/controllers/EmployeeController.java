@@ -46,6 +46,11 @@ public class EmployeeController {
     return employeeService.getEmployeesByName(employeeName);
   }
 
+  @GetMapping("/employeesByDepartment/{department}")
+  public List<Employee> getEmployeesByDepartment(@PathVariable(name="department")String department){
+    return employeeService.getEmployeesByDepartment(department);
+  }
+
   @PostMapping("/employees")
   public void saveEmployee(Employee employee){
     employeeService.saveEmployee(employee);
